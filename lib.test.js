@@ -4,7 +4,9 @@ const createMatrix = require('./lib').createMatrix;
 const rot90        = require('./lib').rot90;
 const mergeChild   = require('./lib').mergeChild;
 const findIndexes  = require('./lib').findIndexes;
+const isInRotatedRange  = require('./lib').isInRotatedRange;
 const run          = require('./lib').run;
+
 const validN       = require('./lib').validN;
 const validS       = require('./lib').validS;
 const validSInputs = require('./lib').validSInputs;
@@ -99,14 +101,27 @@ test('Test find indexes', () => {
   expect(findIndexes(mat, 24)).toEqual([3, 4]);
 });
 
+
+test('Test is in rotated range', () => {
+  // false case
+  expect(isInRotatedRange([1, 1], 2, 3, 3)).toEqual(false);
+  expect(isInRotatedRange([5, 7], 2, 3, 3)).toEqual(false);
+  expect(isInRotatedRange([6, 3], 2, 3, 3)).toEqual(false);
+
+  // true case
+  expect(isInRotatedRange([2, 3], 2, 3, 3)).toEqual(true);
+  expect(isInRotatedRange([5, 6], 2, 3, 3)).toEqual(true);
+
+});
+
 test('Test run excersice', () => {
   const n = 7;
-  const s = 2;
-  const inputs = [[1, 2, 4], [2, 3, 3]];
+  const s = 3;
+  const inputs = [[1, 2, 4], [2, 3, 3], [2, 3, 3]];
 
-  const l_inputs = [11, 24];
+  const l_inputs = [11, 24, 0];
 
-  const expected = [[4, 5], [3, 4]];
+  const expected = [[4, 5], [3, 4], [1, 1]];
   expect(run(n, s, inputs, l_inputs/*, true*/)).toEqual(expected);
 });
 

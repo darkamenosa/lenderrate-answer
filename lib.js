@@ -32,6 +32,8 @@ function rot90(arr) {
  * We have to write this function due to the limitation of numjs API.
  *
  * Numpy numer one =)))
+ *
+ * @deprecated: Remove this function out of run function.
  * 
  * @param  { array } parentMat [Parent matrix]
  * @param  { array } childMat  [Child matrix]
@@ -75,52 +77,80 @@ function findIndexes(mat, num) {
 }
 
 /**
+ * Check if an index is in rotate range or not.
+ * @param  { array }  indexes [index array [x, y], 1-based index]
+ * @param  { int }  start_x [start index to compare] 1-based index]
+ * @param  { int }  start_y [end index to compare] 1-based index]
+ * @param  { int }  d       [width of range]
+ * @return {Boolean} true if indexes is in rotate range, false if not.
+ */
+function isInRotatedRange(indexes, start_x, start_y, d) {
+  // Check null or undefined indexes
+  if (!indexes) {
+    return false;
+  };
+
+  let [x, y] = indexes;
+
+  const compare_x = (x >= start_x) && (x <= start_x + d);
+  const compare_y = (y >= start_y) && (y <= start_y + d);
+
+  // console.log(`x:${x}, y: ${y}, start_x:${start_x}, start_y:${start_y}, d:${d}`);
+
+  return compare_x && compare_y;
+}
+
+/**
  * Run and resolve the exercise.
  * @param  { int } n  [ Matrix size ]
  * @param  { int } s  [ Size of input ]
- * @param  { array } inputs [ array[s x 3] of inputs by s]
+ * @param  { array } sInputs [ array[s x 3] of inputs by s]
  * @param  { array } lInputs [ array[L x 1] of inputs by L]
  */
-function run(n, s, inputs, lInputs, debug) {
+function run(n, s, sInputs, lInputs, debug) {
   const mat = createMatrix(n);
   const res = [];
 
   // const reverse_lInputs = nj.array(lInputs).slice([null,null,-1]).tolist();
   
   for (let i = 0; i < s; i++) {
-    [a, b, d] = inputs[i];
-
-    // I refer python style variable name
-    // easier to read
+    [a, b, d] = sInputs[i];
     
-
-    // Slice matrix based on S input
-    let small_mat = mat.slice([a - 1, a + d], [b - 1, b + d]);
-
-    // Rotate sliced matrix
-    let small_mat_rot90 = rot90(small_mat);
-
-    // Clone big matrix and merge with rotated matrix.
-    const merged_mat = mergeChild(mat.clone(), small_mat_rot90, a - 1, b - 1);
-
-    if (debug) {
-      console.log(merged_mat);
+    // Prevent out of index exception
+    if (i >= lInputs.length) {
+      break; 
     }
 
-    // Prevent out of index exception
-    if (i < lInputs.length) {
+    const lInput = lInputs[i];
+    const res_indexes = findIndexes(mat, lInput);
 
-      const lInput = lInputs[i];
-      const res_indexes = findIndexes(merged_mat, lInput);
-      
-      if (debug) {
-        console.log('w[i]', lInput);
-        console.log('w[i] indexes', res_indexes);  
-      }
-      
+    // Check if indexes is in rorated range or not
+    // If not in rotated range:
+    //    Return indexes
+    // If in rorated range:
+    //    Compute rotated indexes.
+    if (isInRotatedRange(res_indexes, a, b, d)) {
+      // I refer python style variable name
+      // easier to read
+
+      // Slice matrix based on S input
+      let small_mat = mat.slice([a - 1, a + d], [b - 1, b + d]);
+
+      // Rotate sliced matrix
+      let small_mat_rot90 = rot90(small_mat);
+      const rot_indexes = findIndexes(small_mat_rot90, lInput);
+    
       // Only put found indexes to result.
+      if (rot_indexes) {
+        const [x_rot, y_rot] = rot_indexes;
+
+        // Compute rotated indexs and current indexes
+        res.push([a - 1 + x_rot, b - 1 + y_rot]);
+      }
+
+    } else {
       if (res_indexes) {
-        res.push(res_indexes);
+        res.push(res_indexes);  
       }
     }
   }
@@ -200,6 +230,7 @@ module.exports = {
   // Core functions,
   createMatrix,
   rot90,
+  isInRotatedRange,
   mergeChild,
   findIndexes,
   run,
