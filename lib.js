@@ -278,7 +278,7 @@ function binarySearch(array, value) {
  * input: [0, 10, 20, 30]
  * value: 15
  *
- * => return: 2 (b/c: 15 < 20 && 15 < 10)
+ * => return: 2 (b/c: 15 < 20)
  *
  * The same kind of find nearest & largest number index.
  * 
