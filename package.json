@@ -1,0 +1,22 @@
+{
+  "name": "tuyenho-anwser",
+  "version": "1.0.0",
+  "description": "Answer for interview exercise.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "author": "tuyenhx",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^19.0.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "invariant": "^2.2.2",
+    "lodash": "^4.17.4",
+    "numjs": "^0.13.1",
+    "readline-sync": "^1.4.7"
+  }
+}
