@@ -1,5 +1,7 @@
 const nj = require('numjs');
 
+const binarySearch = require('./lib').binarySearch;
+const binarySearchMatrix = require('./lib').binarySearchMatrix;
 const createMatrix = require('./lib').createMatrix;
 const rot90        = require('./lib').rot90;
 const mergeChild   = require('./lib').mergeChild;
@@ -187,4 +189,34 @@ test('Test validate L inputs', () => {
   // true case
   expect(validLInputs([0, 2, 48], 7)).toEqual(true);
   expect(validLInputs([1, 3, 28], 7)).toEqual(true);
+});
+
+test('Test normal binary search', () => {
+
+  const input = [0 , 1 , 2 , 3 , 4 , 5 , 6];
+  
+  expect(binarySearch(input, 0)).toEqual(0);
+  expect(binarySearch(input, 3)).toEqual(3);
+  expect(binarySearch(input, 5)).toEqual(5);  
+
+  expect(binarySearch(input, 10)).toEqual(undefined);  
+});
+
+test('Test binary search matrix', () => {
+
+  const input = nj.array([
+    [0 , 1 , 2 , 3 , 4 , 5 , 6 ],
+    [7 , 8 , 9 , 10, 11, 12, 13],
+    [14, 15, 16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25, 26, 27],
+    [28, 29, 30, 31, 32, 33, 34],
+    [35, 36, 37, 38, 39, 40, 41],
+    [42, 43, 44, 45, 46, 47, 48],
+  ]);
+
+  expect(binarySearchMatrix(input, 0)).toEqual([1, 1]);
+  expect(binarySearchMatrix(input, 3)).toEqual([1, 4]);
+  expect(binarySearchMatrix(input, 33)).toEqual([5, 6]);
+  expect(binarySearchMatrix(input, 48)).toEqual([7, 7]);
+  expect(binarySearchMatrix(input, 13)).toEqual([2, 7]);
 });

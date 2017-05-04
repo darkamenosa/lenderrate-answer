@@ -122,7 +122,9 @@ function run(n, s, sInputs, lInputs, debug) {
     }
 
     const lInput = lInputs[i];
-    const res_indexes = findIndexes(mat, lInput);
+
+    // mat -> is a sorted matrix -> so can implement binary search.
+    const res_indexes = binarySearchMatrix(mat, lInput);
 
     // Check if indexes is in rorated range or not
     // If not in rotated range:
@@ -219,6 +221,61 @@ function validLInputs(inputs, N) {
   return result;
 }
 
+/**
+ * Implement binary search on 2d matrix
+ * @param  { array } matrix [matrix[n x m]]
+ * @param  { int } value [value to search]
+ * @return { array } indexes of value. (1 base indexes);
+ */
+function binarySearchMatrix(matrix, value) {
+  const [rows, cols] = matrix.shape;
+
+  // Get raw matrix from numjs matrix
+  const raw_matrix = matrix.tolist();
+
+  const last_col_index = cols - 1;
+
+  for (let i = 0; i < rows; i++) {
+    // Search from last column
+    let last_right_value = raw_matrix[i][last_col_index];
+
+    if (last_right_value == value) {
+      return [i + 1, cols];
+    } else if (last_right_value > value) {
+      // if last col value > search value
+      // do binary search on the current row
+      const col_index = binarySearch(raw_matrix[i], value);
+      if (_.isNumber(col_index)) {
+        return [i + 1, col_index + 1];    
+      }
+    }
+  }
+}
+
+/**
+ * Seach a value on a sorted array
+ * @param  { array } array [input sorted array]
+ * @param  { int } value [value to search]
+ * @return index of value in the array or null (zero base index)
+ */
+function binarySearch(array, value) {
+  let lo = 0;
+  let hi = array.length - 1;
+
+  while (lo <= hi) {
+    let mid = lo + Math.floor((hi - lo) / 2);
+    let val = array[mid];
+
+    if (val == value) {
+      return mid;
+    } else if (val < value) {
+      lo = mid + 1
+    } else {
+      hi = mid - 1
+    }
+  }
+}
+
 module.exports = {
   // Validate functions,
   validN,
@@ -228,6 +285,8 @@ module.exports = {
   validLInputs,
 
   // Core functions,
+  binarySearch,
+  binarySearchMatrix,
   createMatrix,
   rot90,
   isInRotatedRange,
