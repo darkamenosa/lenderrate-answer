@@ -2,6 +2,7 @@ const nj = require('numjs');
 
 const binarySearch = require('./lib').binarySearch;
 const binarySearchMatrix = require('./lib').binarySearchMatrix;
+const binaryDetectIndex = require('./lib').binaryDetectIndex;
 const createMatrix = require('./lib').createMatrix;
 const rot90        = require('./lib').rot90;
 const mergeChild   = require('./lib').mergeChild;
@@ -219,4 +220,19 @@ test('Test binary search matrix', () => {
   expect(binarySearchMatrix(input, 33)).toEqual([5, 6]);
   expect(binarySearchMatrix(input, 48)).toEqual([7, 7]);
   expect(binarySearchMatrix(input, 13)).toEqual([2, 7]);
+
+  expect(binarySearchMatrix(input, 49)).toEqual(undefined);
+  expect(binarySearchMatrix(input, -1)).toEqual(undefined);
+});
+
+
+test('Test binary detect index', () => {
+  const input = [6, 13, 20, 27, 34, 41, 48];
+
+  expect(binaryDetectIndex(input, -1)).toEqual(0);
+  expect(binaryDetectIndex(input, 13)).toEqual(1);
+  expect(binaryDetectIndex(input, 21)).toEqual(3);
+  expect(binaryDetectIndex(input, 6)).toEqual(0);
+  expect(binaryDetectIndex(input, 48)).toEqual(6);
+  expect(binaryDetectIndex(input, 49)).toEqual(undefined);
 });

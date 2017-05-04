@@ -225,29 +225,25 @@ function validLInputs(inputs, N) {
  * Implement binary search on 2d matrix
  * @param  { array } matrix [matrix[n x m]]
  * @param  { int } value [value to search]
- * @return { array } indexes of value. (1 base indexes);
+ * @return { array } indexes of value. (1 base indexes) or undefined
  */
 function binarySearchMatrix(matrix, value) {
   const [rows, cols] = matrix.shape;
 
   // Get raw matrix from numjs matrix
   const raw_matrix = matrix.tolist();
-
   const last_col_index = cols - 1;
+  const last_col = matrix.slice(null, last_col_index).tolist(); 
 
-  for (let i = 0; i < rows; i++) {
-    // Search from last column
-    let last_right_value = raw_matrix[i][last_col_index];
+  // Detect row to search -> binary search nearest & largest value on last column
+  const row_to_search = binaryDetectIndex(last_col, value);
 
-    if (last_right_value == value) {
-      return [i + 1, cols];
-    } else if (last_right_value > value) {
-      // if last col value > search value
-      // do binary search on the current row
-      const col_index = binarySearch(raw_matrix[i], value);
-      if (_.isNumber(col_index)) {
-        return [i + 1, col_index + 1];    
-      }
+  if (_.isNumber(row_to_search)) {
+
+    // Search value on row and return column index
+    const col_index = binarySearch(raw_matrix[row_to_search], value);
+    if (_.isNumber(col_index)) {
+      return [row_to_search + 1, col_index + 1]
     }
   }
 }
@@ -276,6 +272,53 @@ function binarySearch(array, value) {
   }
 }
 
+/**
+ * Detect index of row by finding value of last column.
+ * Ex:
+ * input: [0, 10, 20, 30]
+ * value: 15
+ *
+ * => return: 2 (b/c: 15 < 20 && 15 < 10)
+ *
+ * The same kind of find nearest & largest number index.
+ * 
+ * @param  { array } array [ input sorted column array ]
+ * @param  { int } value [value to search]
+ * @return index of row (zero base index) or undefined
+ */
+function binaryDetectIndex(array, value) {
+  let lo = 0;
+  let hi = array.length - 1;
+
+  if (value > array[hi]) {
+    return;
+  }
+
+  if (value <= array[lo]) {
+    return lo;
+  }
+
+  if (value == array[hi]) {
+    return hi;
+  }
+
+  while (hi - lo > 1) {
+    let mid = lo + Math.floor((hi - lo) / 2);
+    let val = array[mid];
+
+    if (val <= value) {
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  
+  if ((array[lo] - value) == 0) {
+    return lo;
+  }
+  return hi;
+}
+
 module.exports = {
   // Validate functions,
   validN,
@@ -287,6 +330,7 @@ module.exports = {
   // Core functions,
   binarySearch,
   binarySearchMatrix,
+  binaryDetectIndex,
   createMatrix,
   rot90,
   isInRotatedRange,
